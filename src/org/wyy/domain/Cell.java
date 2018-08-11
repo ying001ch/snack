@@ -2,6 +2,9 @@ package org.wyy.domain;
 
 public class Cell {
 	private String color;
+	/**
+	 * 0代表空格 正数代表蛇身，1是蛇头；-1是食物
+	 */
 	private int flag = 0;
 	private int row;
 	private int col;
@@ -46,4 +49,17 @@ public class Cell {
 		this.col = col;
 	}
 	
+	public void setFood() {
+		setFlag(-1);
+	}
+	public boolean isFood() {
+		if(flag == -1) {
+			return true;
+		}
+		return false;
+	}
+
+	public boolean inSnack() {
+		return flag>0;
+	}
 }

@@ -9,6 +9,8 @@ public class Field {
 	private Snack snack;
 	private String dirction = "E";
 	
+	private boolean hasFood = false;
+	
 	public Field(int rowNum,int colNum,int snackLength) {
 		this.rowNum = rowNum;
 		this.colNum = colNum;
@@ -22,7 +24,9 @@ public class Field {
 		
 		snack = new Snack(snackLength);
 		
+		
 	}
+	
 	
 	public Cell getNeighbor(Cell cell,String directio) {
 		int row = cell.getRow();
@@ -60,11 +64,28 @@ public class Field {
 		private int length;
 		
 		private LinkedList<Cell> list = new LinkedList<>();
+		
 		public Snack(int snackLength) {
 			length = snackLength;
 			for(int i=0;i<snackLength;i++) {
 				elements[rowNum-2][i].setFlag(snackLength-i);
 				list.addFirst(elements[rowNum-2][i]);
+			}
+			
+			makeFood();
+		}
+		/**
+		 * 随机产生食物,不能产生在蛇的身上
+		 */
+		public void makeFood() {
+			while(true) {
+				int rrow = (int)(Math.random()*rowNum);
+				
+				int rcol = (int)(Math.random()*colNum);
+				if(!elements[rrow][rcol].inSnack()) {
+					elements[rrow][rcol].setFood();
+					break;
+				}
 			}
 		}
 		
@@ -73,24 +94,27 @@ public class Field {
 				dirction = Field.this.dirction;
 			}
 			
-			
 			Cell first = list.getFirst();
 			Cell newFir = getNeighbor(first, dirction);
-			newFir.setFlag(1);
+			boolean isFood = newFir.isFood();
+			if(!isFood) {
+				list.removeLast().setFlag(0);
+			}else {
+				length++;
+			}
+			newFir.setFlag(0);
+			list.addFirst(newFir);
 			
 			for (Cell cell:list) {
-				if(cell.getFlag() == length) {
-					cell.setFlag(0);
-				}else {
-					cell.grow();
-				}
+				cell.grow();
 			}
-			list.addFirst(newFir);
-			list.removeLast();
 			Field.this.dirction = dirction;
+			if(isFood) {
+				makeFood();
+				// 如果吃了食物，就再往前移动一次
+				move(dirction);
+			}
 		}
-		
-		
 	}
 	
 	
