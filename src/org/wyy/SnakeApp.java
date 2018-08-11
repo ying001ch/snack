@@ -8,7 +8,7 @@ import javax.swing.JFrame;
 import org.wyy.domain.Field;
 import org.wyy.view.View;
 
-public class GobangApp {
+public class SnakeApp {
 	public static void main(String[] args) {
 		Field field = new Field(15, 15, 4);
 		View view = new View(field);
