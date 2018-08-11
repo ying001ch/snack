@@ -24,6 +24,38 @@ public class Field {
 		
 	}
 	
+	public Cell getNeighbor(Cell cell,String directio) {
+		int row = cell.getRow();
+		int col = cell.getCol();
+		switch(dirction) {
+		case "E": 
+			col++;
+			break;
+		case "W": 
+			col--;
+			break;
+		case "S":
+			row++;
+			break;
+		case "N": 
+			row--;
+			break;
+		default:throw new RuntimeException("方向不对，只能东南西北");
+		}
+		
+		if(row < 0) {
+			row = rowNum-1;
+		}else if(row >= rowNum) {
+			row = 0;
+		}
+		if(col < 0) {
+			col = colNum-1;
+		}else if(col >= colNum) {
+			col = 0;
+		}
+		
+		return elements[row][col];
+	}
 	public class Snack {
 		private int length;
 		
@@ -41,53 +73,19 @@ public class Field {
 				dirction = Field.this.dirction;
 			}
 			
-			int r = 0;
-			int c = 0;
+			
+			Cell first = list.getFirst();
+			Cell newFir = getNeighbor(first, dirction);
+			newFir.setFlag(1);
+			
 			for (Cell cell:list) {
-				int flag = cell.getFlag();
-				int i = cell.getRow();
-				int j = cell.getCol();
-				if(flag == 1) {
-					switch(dirction) {
-					case "E": 
-						r = i;
-						c = j+1;
-						if(c >= colNum) {
-							c = colNum - 1;
-						}
-						break;
-					case "W": 
-						r = i;
-						c = j-1;
-						if(c < 0) {
-							c = 0;
-						}
-						break;
-					case "S":
-						r = i + 1;
-						c = j;
-						if(r >= rowNum) {
-							r = rowNum -1;
-						}
-						break;
-					case "N": 
-						r = i - 1;
-						c = j;
-						if(r < 0) {
-							r = 0;
-						}
-						break;
-					
-					}
-					elements[r][c].setFlag(1);
-				}
-				if(flag == length) {
+				if(cell.getFlag() == length) {
 					cell.setFlag(0);
 				}else {
 					cell.grow();
 				}
 			}
-			list.addFirst(elements[r][c]);
+			list.addFirst(newFir);
 			list.removeLast();
 			Field.this.dirction = dirction;
 		}

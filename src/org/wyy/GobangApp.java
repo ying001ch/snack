@@ -55,9 +55,9 @@ public class GobangApp {
 		
 		while(true) {
 			
+			field.move();
 			// 重绘制界面
 			jFrame.repaint();
-			field.move();
 			//
 			try {
 				Thread.sleep(500);
