@@ -1,9 +1,12 @@
 package org.wyy.domain;
 
+import java.awt.Color;
+import java.awt.Graphics;
+
 public class Cell {
 	private String color;
 	/**
-	 * 0代表空格 正数代表蛇身，1是蛇头；-1是食物
+	 * 0代表空格； 正数代表蛇身，1是蛇头；-1是食物；-2 障碍物
 	 */
 	private int flag = 0;
 	private int row;
@@ -13,6 +16,19 @@ public class Cell {
 		this.row = i; this.col = j;
 	}
 
+	public void paint(Graphics g, int x, int y,int gradeSize) {
+		g.setColor(Color.BLACK);
+		g.drawRect(gradeSize*x, gradeSize*y, gradeSize, gradeSize);
+		if(flag == -2) {
+			g.setColor(Color.RED);
+			g.fillRect(gradeSize*x, gradeSize*y, gradeSize, gradeSize);
+		}else if(flag == -1) {
+			g.setColor(Color.green);
+			g.fillRect(gradeSize*x, gradeSize*y, gradeSize, gradeSize);
+		}if(flag != 0) {
+			g.fillRect(gradeSize*x, gradeSize*y, gradeSize, gradeSize);
+		}
+	}
 	public String getColor() {
 		return color;
 	}
@@ -53,13 +69,17 @@ public class Cell {
 		setFlag(-1);
 	}
 	public boolean isFood() {
-		if(flag == -1) {
-			return true;
-		}
-		return false;
+		return flag == -1;
+	}
+	public boolean isBarrier() {
+		return flag == -2;
 	}
 
 	public boolean inSnack() {
 		return flag>0;
+	}
+
+	public void setBarrier() {
+		flag = -2;
 	}
 }

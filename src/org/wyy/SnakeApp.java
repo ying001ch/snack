@@ -55,7 +55,10 @@ public class SnakeApp {
 		
 		while(true) {
 			
-			field.move();
+			if(!field.move()) {
+				System.out.println("撞到自己或者障碍物 结束");
+				break;
+			}
 			// 重绘制界面
 			jFrame.repaint();
 			//

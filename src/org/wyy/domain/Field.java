@@ -23,10 +23,14 @@ public class Field {
 		}
 		
 		snack = new Snack(snackLength);
-		
-		
+		makeBarrier();
 	}
 	
+	private void makeBarrier(){
+		elements[6][6].setBarrier();
+		elements[6][7].setBarrier();
+		elements[6][8].setBarrier();
+	}
 	
 	public Cell getNeighbor(Cell cell,String directio) {
 		int row = cell.getRow();
@@ -82,20 +86,23 @@ public class Field {
 				int rrow = (int)(Math.random()*rowNum);
 				
 				int rcol = (int)(Math.random()*colNum);
-				if(!elements[rrow][rcol].inSnack()) {
+				if(!elements[rrow][rcol].inSnack() && !elements[rrow][rcol].isBarrier()) {
 					elements[rrow][rcol].setFood();
 					break;
 				}
 			}
 		}
 		
-		public void move(String dirction) {
+		public boolean move(String dirction) {
 			if(dirction.equals("O")) {
 				dirction = Field.this.dirction;
 			}
 			
 			Cell first = list.getFirst();
 			Cell newFir = getNeighbor(first, dirction);
+			if(newFir.isBarrier() || newFir.inSnack()) {
+				return false;
+			}
 			boolean isFood = newFir.isFood();
 			if(!isFood) {
 				list.removeLast().setFlag(0);
@@ -112,8 +119,9 @@ public class Field {
 			if(isFood) {
 				makeFood();
 				// 如果吃了食物，就再往前移动一次
-				move(dirction);
+				return move(dirction);
 			}
+			return true;
 		}
 	}
 	
@@ -126,8 +134,8 @@ public class Field {
 		this.elements = elements;
 	}
 
-	public void move() {
-		snack.move(dirction);
+	public boolean move() {
+		return snack.move(dirction);
 	}
 
 	public int getRowNum() {

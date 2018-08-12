@@ -23,10 +23,7 @@ public class View  extends JPanel{
 		Cell[][] elements = field.getElements();
 			for(int j=0;j<elements.length;j++) {
 				for(int i=0;i<elements[j].length;i++) {
-				g.drawRect(GRID_SIZE*j, GRID_SIZE*i, GRID_SIZE, GRID_SIZE);
-				if(elements[i][j].getFlag() != 0) {
-					g.fillRect(GRID_SIZE*j, GRID_SIZE*i, GRID_SIZE, GRID_SIZE);
-				}
+				elements[i][j].paint(g, j, i, GRID_SIZE);
 			}
 		}
 	}
