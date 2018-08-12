@@ -75,11 +75,25 @@ public class Cell {
 		return flag == -2;
 	}
 
-	public boolean inSnack() {
+	public boolean inSnake() {
 		return flag>0;
 	}
 
 	public void setBarrier() {
 		flag = -2;
+	}
+
+	public static String inverseDirction(String dirction) {
+		switch(dirction) {
+		case "W":
+			return "E";
+		case "E":
+			return "W";
+		case "N":
+			return "S";
+		case "S":
+			return "N";
+			default:return "O";
+		}
 	}
 }

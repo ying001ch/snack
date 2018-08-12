@@ -6,7 +6,8 @@ public class Field {
 	private Cell[][] elements;
 	private int rowNum;
 	private int colNum;
-	private Snack snack;
+	private Snake snack;
+	private String preDirection = "E";
 	private String dirction = "E";
 	
 	private boolean hasFood = false;
@@ -22,7 +23,7 @@ public class Field {
 			}
 		}
 		
-		snack = new Snack(snackLength);
+		snack = new Snake(snackLength);
 		makeBarrier();
 	}
 	
@@ -35,7 +36,7 @@ public class Field {
 	public Cell getNeighbor(Cell cell,String directio) {
 		int row = cell.getRow();
 		int col = cell.getCol();
-		switch(dirction) {
+		switch(directio) {
 		case "E": 
 			col++;
 			break;
@@ -64,19 +65,14 @@ public class Field {
 		
 		return elements[row][col];
 	}
-	public class Snack {
-		private int length;
+	public class Snake {
+		private int initLength;
 		
 		private LinkedList<Cell> list = new LinkedList<>();
 		
-		public Snack(int snackLength) {
-			length = snackLength;
-			for(int i=0;i<snackLength;i++) {
-				elements[rowNum-2][i].setFlag(snackLength-i);
-				list.addFirst(elements[rowNum-2][i]);
-			}
-			
-			makeFood();
+		public Snake(int snakeLength) {
+			initLength = snakeLength;
+			reset();
 		}
 		/**
 		 * 随机产生食物,不能产生在蛇的身上
@@ -86,7 +82,7 @@ public class Field {
 				int rrow = (int)(Math.random()*rowNum);
 				
 				int rcol = (int)(Math.random()*colNum);
-				if(!elements[rrow][rcol].inSnack() && !elements[rrow][rcol].isBarrier()) {
+				if(!elements[rrow][rcol].inSnake() && !elements[rrow][rcol].isBarrier()) {
 					elements[rrow][rcol].setFood();
 					break;
 				}
@@ -94,20 +90,21 @@ public class Field {
 		}
 		
 		public boolean move(String dirction) {
-			if(dirction.equals("O")) {
-				dirction = Field.this.dirction;
+			if(dirction.equals("O") || Field.this.preDirection.equals(Cell.inverseDirction(dirction))) {
+				dirction = Field.this.preDirection;
+				System.out.println("direction: "+dirction);
 			}
 			
 			Cell first = list.getFirst();
 			Cell newFir = getNeighbor(first, dirction);
-			if(newFir.isBarrier() || newFir.inSnack()) {
+			if(newFir.isBarrier() || newFir.inSnake()) {
 				return false;
 			}
 			boolean isFood = newFir.isFood();
 			if(!isFood) {
 				list.removeLast().setFlag(0);
 			}else {
-				length++;
+//				initLength++;
 			}
 			newFir.setFlag(0);
 			list.addFirst(newFir);
@@ -115,13 +112,23 @@ public class Field {
 			for (Cell cell:list) {
 				cell.grow();
 			}
-			Field.this.dirction = dirction;
+			Field.this.preDirection = dirction;
 			if(isFood) {
 				makeFood();
 				// 如果吃了食物，就再往前移动一次
 				return move(dirction);
 			}
 			return true;
+		}
+	
+		public void reset() {
+			list.clear();
+			for(int i=0;i<initLength;i++) {
+				elements[rowNum-2][i].setFlag(initLength-i);
+				list.addFirst(elements[rowNum-2][i]);
+			}
+			
+			makeFood();
 		}
 	}
 	
@@ -160,6 +167,18 @@ public class Field {
 
 	public void setDirction(String dirction) {
 		this.dirction = dirction;
+	}
+
+	public void reset() {
+		for (Cell[] cells : elements) {
+			for (Cell cell : cells) {
+				if(!cell.isBarrier()) {
+					cell.setFlag(0);
+				}
+			}
+		}
+		this.snack.reset();
+		this.dirction = "E";
 	}
 	
 }
