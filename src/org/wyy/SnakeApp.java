@@ -125,14 +125,14 @@ public class SnakeApp {
 				e.printStackTrace();
 			}
 			
+			if(!isPlaying) {
+				System.out.println("暂停");
+				break;
+			}
 			if(!field.move()) {
 				isOver = true;
 				isPlaying = false;
 				System.out.println("撞到自己或者障碍物 结束");
-				break;
-			}
-			if(!isPlaying) {
-				System.out.println("暂停");
 				break;
 			}
 			// 重绘制界面
